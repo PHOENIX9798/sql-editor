@@ -11,9 +11,10 @@ export const monarchLanguage = <ILanguage>{
     // Set defaultToken to invalid to see what you do not tokenize yet
     defaultToken: 'invalid',
     keywords: [
-        'COMPLETE', 'ADD',
+        'AS', 'SELECT', 'DISTINCT', 'UNIQUE', 'ALL', 'FROM', 'WHERE',
+        'as', 'select', 'distinct', 'unique', 'all', 'from', 'where'
     ],
-    typeKeywords: ['TODO'],
+    typeKeywords: [''],
     escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
     // The main tokenizer for our languages
     tokenizer: {
@@ -33,8 +34,8 @@ export const monarchLanguage = <ILanguage>{
             [/"/, 'string', '@string'],
         ],
         whitespace: [
-			[/[ \t\r\n]+/, ''],
-		],
+            [/[ \t\r\n]+/, ''],
+        ],
         string: [
             [/[^\\"]+/, 'string'],
             [/@escapes/, 'string.escape'],
