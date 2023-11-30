@@ -24,6 +24,7 @@ export default class TodoLangErrorListener implements ANTLRErrorListener<any>{
                 code: "1" // This the error code you can customize them as you want
             }
         )
+        console.log('this.errors :>> ', this.errors);
     }
 
     getErrors(): ITodoLangError[] {

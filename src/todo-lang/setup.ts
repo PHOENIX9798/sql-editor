@@ -24,7 +24,6 @@ export function setupLanguage() {
         const worker: WorkerAccessor = (...uris: monaco.Uri[]): Promise<TodoLangWorker> => {
             return client.getLanguageServiceWorker(...uris);
         };
-        //Call the errors provider
         new DiagnosticsAdapter(worker);
         monaco.languages.registerCompletionItemProvider(languageID, new OracleCompletionItemProvider(worker));
         monaco.languages.registerDocumentFormattingEditProvider(languageID, new TodoLangFormattingProvider(worker));
