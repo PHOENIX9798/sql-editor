@@ -28,7 +28,16 @@ export function setupLanguage() {
         monaco.languages.registerCompletionItemProvider(languageID, new OracleCompletionItemProvider(worker));
         monaco.languages.registerDocumentFormattingEditProvider(languageID, new TodoLangFormattingProvider(worker));
     });
-
+    console.log(' 自动填充:>> ', `
+    两种，表的提示，关键字提示，
+    优点：表名的提示和列名的提示，
+    缺点：表名和列名提示跟关键字提示做一起了，数据量大的时候难找`);
+    console.log(' 语义分析:>> ', `
+    select 后面的所选表是否存在，from后面所选表是否存在、是否重复；
+    错误例子：SELECT t1.column1 AS t1_col1, t2.column2 t2_col2 FROM table1
+    正确表名：Classes
+    正确列名：ClassID
+    `);
 }
 
 export type WorkerAccessor = (...uris: monaco.Uri[]) => Promise<TodoLangWorker>;

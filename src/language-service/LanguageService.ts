@@ -16,20 +16,13 @@ export default class TodoLangLanguageService {
         // to make things simple, we only allow formatting a valide code
         if (this.validate(code).length > 0)
             return code;
-        let formattedCode = "";
-        // const ast: ExpressionContext = parseAndGetASTRoot(code);
-        // ast.children.forEach(node => {
-        //     if (node instanceof AddExpressionContext) {
-        //         // if a Add expression : ADD TODO "STRING"
-        //         const todo = node.STRING().text;
-        //         formattedCode += `ADD TODO ${todo}\n`;
-        //     }else if(node instanceof CompleteExpressionContext) {
-        //         // If a Complete expression: COMPLETE TODO "STRING"
-        //         const todoToComplete = node.STRING().text;
-        //         formattedCode += `COMPLETE TODO ${todoToComplete}\n`;
-        //     }
-        // });
-        return formattedCode;
+
+        const formattedSQL = code
+            .replace(/\b(SELECT|FROM|WHERE|JOIN|AND|OR|GROUP BY|ORDER BY)\b/g, "\n$1") // 在关键字前换行
+            .replace(/,\s/g, ",\n  ") // 逗号后换行并缩进
+        return formattedSQL;
+        // const res = format(code);
+        // return res;
     }
 }
 
@@ -40,7 +33,7 @@ function checkSemanticRules(ast: Select_statementContext): ITodoLangError[] {
         return errors;
     }
     ast.children.forEach((node) => {
-        const { text } = node || {};
+        const { text = '' } = node || {};
         const currentTables = Object.keys(TABLE_LIST);
         const currentColumns = [];
         Object.keys(TABLE_LIST).forEach(item => {
@@ -50,18 +43,26 @@ function checkSemanticRules(ast: Select_statementContext): ITodoLangError[] {
                 }
             })
         })
-        console.log('node :>> ', node);
-        // console.log('node :>> ', node);
-        //t1.column1ASt1_col1,t2.column2ASt2_col2
         if (node instanceof Selected_listContext) {
-            const { tables, columns } = splitToGetTable(node);
+            const { tables = [], columns = [] } = splitToGetTable(node) || {};
             const diffTableData = diffTables(tables, currentTables);
+            const diffColumnData = diffTables(columns, currentColumns);
             if (diffTableData.length > 0) {
                 errors.push({
                     code: "2",
                     endColumn: node.stop.stopIndex + 2,
                     endLineNumber: node.stop.line,
                     message: `table ${diffTableData} is not found`,
+                    startColumn: node.start.stopIndex + 3,
+                    startLineNumber: node.stop.line
+                });
+            }
+            if (diffColumnData.length > 0) {
+                errors.push({
+                    code: "2",
+                    endColumn: node.stop.stopIndex + 2,
+                    endLineNumber: node.stop.line,
+                    message: `column ${diffColumnData} is not found`,
                     startColumn: node.start.stopIndex + 3,
                     startLineNumber: node.stop.line
                 });
@@ -154,6 +155,7 @@ function splitStringToArray(text: string, splitString: string) {
     return res;
 }
 
+// 找arrayA不存在于arrayB的部分
 function diffTables(arrayA: string[], arrayB: string[]) {
     return arrayA.filter(item => arrayB.indexOf(item) === -1);
 }
@@ -195,8 +197,12 @@ function splitToGetTable(node: ParseTree) {
     splitTableName(node);
     splitRes.forEach(item => {
         const [tableName, columnName] = item.split('.');
-        tableRes.push(tableName);
-        columnRes.push(columnName);
+        if (tableRes.indexOf(tableName) === -1) {
+            tableRes.push(tableName);
+        }
+        if (columnRes.indexOf(columnName) === -1) {
+            columnRes.push(columnName);
+        }
     })
     return { tables: tableRes, columns: columnRes };
 }

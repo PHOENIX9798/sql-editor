@@ -43,7 +43,7 @@ export default class OracleCompletionItemProvider implements monaco.languages.Co
 
         function insertValue(firstChar: string, value: string) {
             if (WORD_MAP[firstChar]) {
-                if (WORD_MAP[firstChar].indexOf(value) > -1) return;
+                if (WORD_MAP[firstChar].some(item => item['Class'] === value)) return
                 WORD_MAP[firstChar].push({ 'Class': value });
             } else {
                 WORD_MAP[firstChar] = [{ 'Class': value }]
