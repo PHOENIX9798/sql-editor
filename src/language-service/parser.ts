@@ -1,14 +1,14 @@
-import { OracleStatementParser, Select_statementContext } from "../ANTLR/OracleStatementParser";
-import { OracleStatementLexer } from "../ANTLR/OracleStatementLexer";
-import { ANTLRInputStream, CommonTokenStream } from "antlr4ts";
+import PlSqlParser, { Sql_scriptContext } from "../ANTLR/PlSqlParser";
+import PlSqlLexer from "../ANTLR/PlSqlLexer";
+import { CharStream, CommonTokenStream } from "antlr4";
 import TodoLangErrorListener, { ITodoLangError } from "./TodoLangErrorListener";
 
-function parse(code: string): { ast: Select_statementContext, errors: ITodoLangError[] } {
+function parse(code: string): { ast: Sql_scriptContext, errors: ITodoLangError[] } {
     // 将输入的字符串转换成ANTLR可识别的流
-    const inputStream = new ANTLRInputStream(code);
+    const inputStream = new CharStream(code);
 
     // 词法分析器，带着输入的信息
-    const lexer = new OracleStatementLexer(inputStream);
+    const lexer = new PlSqlLexer(inputStream);
 
     lexer.removeErrorListeners()
 
@@ -21,17 +21,17 @@ function parse(code: string): { ast: Select_statementContext, errors: ITodoLangE
     const tokenStream = new CommonTokenStream(lexer);
     
     // 语法解析器，用于解析标记流并生成语法树
-    const parser = new OracleStatementParser(tokenStream);
+    const parser = new PlSqlParser(tokenStream);
 
     parser.removeErrorListeners();
     parser.addErrorListener(todoLangErrorsListner);
 
     // 生成ast树
-    const ast = parser.select_statement();
+    const ast = parser.sql_script();
     const errors: ITodoLangError[] = todoLangErrorsListner.getErrors();
     return { ast, errors };
 }
-export function parseAndGetASTRoot(code: string): Select_statementContext {
+export function parseAndGetASTRoot(code: string): Sql_scriptContext {
     const { ast } = parse(code);
     return ast;
 }

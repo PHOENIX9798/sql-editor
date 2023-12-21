@@ -19,7 +19,7 @@ export function setupLanguage() {
     monaco.languages.onLanguage(languageID, () => {
         // 配置了语法高亮
         monaco.languages.setMonarchTokensProvider(languageID, monarchLanguage);
-        // 配置了代码折叠打开
+        // 配置了代码折叠打开,todo
         monaco.languages.setLanguageConfiguration(languageID, richLanguageConfiguration);
         const client = new WorkerManager();
 

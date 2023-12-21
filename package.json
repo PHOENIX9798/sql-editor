@@ -4,11 +4,12 @@
   "description": "TodoLang editor",
   "scripts": {
     "start": "webpack-dev-server --hot --open",
-    "antlr4ts": "antlr4ts ./OracleStatement.g4 -o ./src/ANTLR"
+    "antlr4ts": "java org.antlr.v4.Tool -Dlanguage=TypeScript -visitor ./PlSqlLexer.g4 ./PlSqlParser.g4 -o ./src/ANTLR"
   },
   "author": "Open",
   "license": "ISC",
   "dependencies": {
+    "antlr4": "^4.13.1-patch-1",
     "antlr4ts": "^0.5.0-alpha.4",
     "monaco-editor-core": "^0.18.1",
     "react": "^16.8.6",
